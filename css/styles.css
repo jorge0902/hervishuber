@@ -1,48 +1,76 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 body {
+    font-family: 'Inter', sans-serif;
+    background-color: #FFFFFF;
+    color: #111111;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
-.custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #E5E5E5;
-    border-radius: 10px;
-}
-.dark .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #333333;
+/* Custom maplibre marker smooth movement */
+.driver-marker {
+    transition: all 1.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+    will-change: transform;
 }
 
-.glass-panel {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(8px);
-    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
+/* Glassmorphism cards */
+.glass-card {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(229, 231, 235, 0.8);
 }
 
-.dark .glass-panel {
-    background: rgba(0, 0, 0, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+.glass-nav {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(243, 244, 246, 1);
 }
 
-.map-bg {
-    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCCj9o0wD_EjEEUg8WJP8HyDxzqQdNyYrHNja0oKqhFXmXo_ObcJ-Mo0u3TREU3scgaDAttscGFTRWXa-DNrxe07LAJFglaa_fYUPJk8t0jBsfyfV4x9kihfVk8_HD0FUFISfu3nn7jyHVVZi8fHrlaYSuJh6mkMWF4LEZkBKKo1wWq7phuo4kFuXCYKHHMyUO4z8TGBv8c2vbJJy1y9bpiNaHpApv90g8mfFwVIreIv_TQgPg2fHW8');
-    background-size: cover;
-    background-position: center;
-    filter: grayscale(80%) contrast(1.1);
+/* Custom pulse indicator */
+.emerald-pulse {
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4);
+    animation: pulse-emerald 2s infinite;
 }
 
-/* Animations */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+@keyframes pulse-emerald {
+    0% {
+        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(22, 163, 74, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+    }
 }
 
-.animate-fade-in {
-    animation: fadeIn 0.4s ease-out forwards;
+/* Mobile Bottom Sheet Drawer */
+.bottom-sheet {
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.bottom-sheet.collapsed {
+    transform: translateY(calc(100% - 76px));
+}
+
+.bottom-sheet.expanded {
+    transform: translateY(0);
+}
+
+/* Maplibre Popup Styling Overrides */
+.maplibregl-popup-content {
+    border-radius: 16px;
+    padding: 0;
+    box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.12);
+    border: 1px solid #F3F4F6;
+    overflow: hidden;
+}
+
+.maplibregl-popup-close-button {
+    padding: 6px 10px;
+    font-size: 16px;
+    color: #6B7280;
 }
