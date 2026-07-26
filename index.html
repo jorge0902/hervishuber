@@ -1,187 +1,370 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>EliteLatam Dubai | Movilidad Premium</title>
+    <title>HervisHuber | Premium Mobility</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
     <script id="tailwind-config">
         tailwind.config = {
-            darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        uber: {
-                            black: "#000000",
-                            gray: "#F6F6F6",
-                            darkgray: "#242424",
-                            green: "#05A357" // Careem/Uber green accent
-                        },
-                        careem: {
-                            green: "#49B649"
-                        },
-                        accent: {
-                            gold: "#E9C176" // Keeping the premium Latin feel
+                        brand: {
+                            black: "#111111",
+                            white: "#FFFFFF",
+                            lightgray: "#F5F5F5",
+                            darkgray: "#404040",
+                            green: "#16A34A"
                         }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'xl': '12px',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 40px -8px rgba(0, 0, 0, 0.08)',
+                        'subtle': '0 2px 10px rgba(0, 0, 0, 0.03)',
                     }
                 }
             }
         }
     </script>
     <link rel="stylesheet" href="css/styles.css"/>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #FFFFFF; color: #111111; -webkit-font-smoothing: antialiased; }
+        .hero-map-bg {
+            background-image: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2074&auto=format&fit=crop'); /* Clean map-like high altitude view placeholder */
+            background-size: cover;
+            background-position: center;
+        }
+        .nav-scrolled {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #F5F5F5;
+        }
+        .accordion-content {
+            display: none;
+        }
+        .accordion-content.active {
+            display: block;
+        }
+    </style>
 </head>
-<body class="bg-uber-black text-white font-sans selection:bg-accent-gold selection:text-uber-black">
-    <!-- Header -->
-    <header class="fixed top-0 w-full z-50 bg-uber-black transition-all duration-300" id="main-header">
-        <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
-            <div class="flex items-center gap-8">
-                <a href="index.html" class="text-2xl font-bold tracking-tighter">EliteLatam</a>
-                <nav class="hidden md:flex gap-6">
-                    <a href="booking.html" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Viajar</a>
-                    <a href="dashboard.html" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Empresas</a>
-                </nav>
+<body class="selection:bg-brand-green selection:text-white">
+
+    <!-- Navbar -->
+    <header id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 py-4">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
+            <a href="#" class="text-xl font-bold tracking-tight text-brand-black flex items-center gap-2">
+                <i data-lucide="navigation-2" class="w-6 h-6 text-brand-green"></i>
+                HervisHuber
+            </a>
+            <nav class="hidden md:flex gap-8">
+                <a href="#inicio" class="text-sm font-medium text-brand-darkgray hover:text-brand-black transition-colors">Inicio</a>
+                <a href="#servicios" class="text-sm font-medium text-brand-darkgray hover:text-brand-black transition-colors">Servicios</a>
+                <a href="#conductores" class="text-sm font-medium text-brand-darkgray hover:text-brand-black transition-colors">Conductores</a>
+                <a href="#faq" class="text-sm font-medium text-brand-darkgray hover:text-brand-black transition-colors">FAQ</a>
+            </nav>
+            <div class="hidden md:flex items-center gap-4">
+                <a href="dashboard.html" class="text-sm font-medium text-brand-darkgray hover:text-brand-black transition-colors">Ingresar</a>
+                <a href="booking.html" class="bg-brand-black text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-black transition-colors">Reservar</a>
             </div>
-            <div class="flex items-center gap-4">
-                <button class="text-sm font-medium hover:bg-white/10 px-3 py-2 rounded-full transition-all hidden sm:block">Ayuda</button>
-                <a href="dashboard.html" class="bg-white text-uber-black px-4 py-2 rounded-full text-sm font-bold hover:bg-gray-200 transition-colors">Iniciar sesión</a>
-            </div>
+            <button class="md:hidden text-brand-black">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
         </div>
     </header>
 
-    <main class="pt-16">
-        <!-- Hero Section Uber Style -->
-        <section class="relative min-h-[90vh] flex flex-col lg:flex-row bg-uber-black">
-            <!-- Left Side - Booking -->
-            <div class="w-full lg:w-1/2 p-6 md:p-12 lg:p-20 flex flex-col justify-center z-10">
-                <h1 class="text-4xl md:text-6xl font-bold mb-10 leading-tight">Muévete por Dubái con exclusividad</h1>
+    <!-- Hero Section -->
+    <section id="inicio" class="relative w-full h-screen flex items-center justify-center lg:justify-start lg:pl-[10%]">
+        <!-- Map Background (70% visual weight) -->
+        <div class="absolute inset-0 z-0 flex justify-end">
+            <div class="w-full lg:w-[75%] h-full hero-map-bg opacity-90 grayscale-[20%]"></div>
+            <!-- Fade gradient to blend map with left white area on desktop -->
+            <div class="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent lg:w-1/2"></div>
+        </div>
+
+        <!-- Floating Card -->
+        <div class="relative z-10 bg-white p-8 md:p-10 rounded-2xl shadow-soft max-w-[420px] w-[90%] md:w-full mt-16 lg:mt-0 border border-brand-lightgray">
+            <h1 class="text-4xl font-semibold tracking-tight text-brand-black mb-2">Viaja con nivel.</h1>
+            <p class="text-brand-darkgray mb-8">Movilidad profesional y premium en Dubái.</p>
+            
+            <form action="booking.html" class="space-y-4">
+                <div class="relative group">
+                    <div class="absolute left-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-brand-black"></div>
+                    <div class="absolute left-[19px] top-[24px] w-0.5 h-6 bg-brand-lightgray"></div>
+                    <input class="w-full pl-10 pr-4 py-3.5 bg-brand-lightgray border border-transparent rounded-xl focus:bg-white focus:border-brand-green focus:ring-0 text-sm font-medium transition-all outline-none" type="text" placeholder="Punto de recogida" value="Aeropuerto Internacional de Dubái (DXB)"/>
+                </div>
+                <div class="relative group">
+                    <div class="absolute left-4 top-1/2 -translate-y-1/2 w-2 h-2 bg-brand-green rounded-sm"></div>
+                    <input class="w-full pl-10 pr-4 py-3.5 bg-brand-lightgray border border-transparent rounded-xl focus:bg-white focus:border-brand-green focus:ring-0 text-sm font-medium transition-all outline-none" type="text" placeholder="¿Hacia dónde vas?" />
+                </div>
                 
-                <!-- Booking Box -->
-                <div class="bg-white text-uber-black p-6 rounded-2xl shadow-2xl max-w-md w-full">
-                    <h2 class="text-2xl font-bold mb-6">Pedir un viaje</h2>
-                    <form action="booking.html" class="space-y-4">
-                        <div class="relative">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 w-2 h-2 bg-uber-black rounded-full"></span>
-                            <div class="absolute left-[19px] top-[24px] w-0.5 h-8 bg-gray-300"></div>
-                            <input class="w-full pl-10 pr-4 py-3 bg-uber-gray border-none rounded-lg focus:ring-2 focus:ring-uber-black/20 text-sm font-medium" placeholder="Lugar de recogida" type="text" value="Dubai International Airport (DXB)"/>
-                        </div>
-                        <div class="relative mt-2">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 w-2 h-2 border-2 border-uber-black"></span>
-                            <input class="w-full pl-10 pr-4 py-3 bg-uber-gray border-none rounded-lg focus:ring-2 focus:ring-uber-black/20 text-sm font-medium" placeholder="¿A dónde vas?" type="text"/>
-                        </div>
-                        <div class="flex gap-3 pt-2">
-                            <button type="button" class="flex-1 bg-uber-gray py-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors">
-                                <span class="material-symbols-outlined text-sm">schedule</span> Hoy
-                            </button>
-                            <button type="button" class="flex-1 bg-uber-gray py-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors">
-                                <span class="material-symbols-outlined text-sm">person</span> 1 Pasajero
-                            </button>
-                        </div>
-                        <button type="submit" class="w-full bg-uber-black text-white py-4 rounded-lg font-bold text-lg hover:bg-uber-darkgray transition-all mt-6 shadow-lg">
-                            Ver precios
-                        </button>
-                    </form>
+                <div class="flex items-center justify-between py-4 border-b border-brand-lightgray mt-2 mb-2">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="clock" class="w-4 h-4 text-brand-darkgray"></i>
+                        <span class="text-sm font-medium text-brand-darkgray">~25 min</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="credit-card" class="w-4 h-4 text-brand-darkgray"></i>
+                        <span class="text-sm font-medium text-brand-darkgray">Est. AED 120</span>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Right Side - Visual -->
-            <div class="lg:w-1/2 relative min-h-[400px] w-full">
-                <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCZD3EqPdlDTJPoRvNDsKPaSweDxAzPJ25pHJ_-1U8ribbQDDtfBoFx4fNsx39nL_X9pMgpG0m63UgC3slfrIQAprrM_VwS4FP_ijJXNXU-8gz73DMR83rAmPERe-5p2nSqt1st-W1GxuUBo_0KA8rkaeZ4OsqrFYfMxS9yfYiU3mWuAAzEXLgT2zb2ddeKsO08ALnAfps9eZ2I0EVVq721Q-2cBPgOXUpiptWCBJFJH6WXBIfRWyIT');"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-uber-black via-transparent to-transparent lg:hidden"></div>
-                <div class="absolute inset-0 bg-gradient-to-r from-uber-black via-uber-black/30 to-transparent hidden lg:block"></div>
-            </div>
-        </section>
+                <button type="submit" class="w-full bg-brand-green text-white py-4 rounded-xl font-medium hover:bg-[#15803D] transition-colors mt-4 flex items-center justify-center gap-2">
+                    Solicitar viaje
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </form>
+        </div>
+    </section>
 
-        <!-- Categories -->
-        <section class="py-24 bg-white text-uber-black">
-            <div class="max-w-7xl mx-auto px-6">
-                <h2 class="text-3xl font-bold mb-12">Nuestras categorías</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="group bg-uber-gray rounded-2xl p-6 hover:shadow-xl transition-all cursor-pointer">
-                        <img alt="Elite Sedan" class="w-full h-40 object-contain mb-6 drop-shadow-xl group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQwA8kfEu02iFwsD7V7nO3vN4IV1DBY4uGu-8jdHb-1Msm7muLBMIR9Ff5JuRj1lbvsxfT8tgFEce2x4Et7YfAt5ClCTh4gfKeAWjygmtFj5nuVutMd85GQCV44G8RyqSBIFwfMEyvuci7FfKjda49FWmlbfSxfyiFRk03H5fhvqARp4GZLyZjHFw0-SnEnIqfmNTAGzJ4qfs43rPxOXaNMbwZYLjayM8S3e3rTwq_wJTsXF3QPa7o"/>
-                        <div class="flex justify-between items-center mb-2">
-                            <h3 class="text-xl font-bold">Elite Black</h3>
-                        </div>
-                        <p class="text-gray-600 text-sm mb-4">Sedanes de lujo con conductores bilingües. Ideal para ejecutivos.</p>
-                    </div>
-                    
-                    <div class="group bg-uber-gray rounded-2xl p-6 hover:shadow-xl transition-all cursor-pointer">
-                        <img alt="Elite SUV" class="w-full h-40 object-contain mb-6 drop-shadow-xl group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWsjnd47EmZP8UkkrJH8T0KKV7nJFlx1YhCCLWFATnAGUih37DUkyLRJcwtodzVywqldf2Ak1iBY6Rh6_HylYg2vrSNqBcb4QP6ZfA8BDu0p_HTZgqqRMa24Z6soqgrRwOPFfm48EE92_1K1LcrkLF330XzOQL7Tf_OCBpEdLQj_uX9bHj_AxDjlzlpABqFXosjVQHKz6rS1zJh4SOWNh_yg50Gq-fZAqfLXr4O40OHtFqEmmaMtwc"/>
-                        <div class="flex justify-between items-center mb-2">
-                            <h3 class="text-xl font-bold">Elite SUV</h3>
-                        </div>
-                        <p class="text-gray-600 text-sm mb-4">Espacio adicional para hasta 6 pasajeros y equipaje.</p>
-                    </div>
-                    
-                    <div class="group bg-uber-black text-white rounded-2xl p-6 hover:shadow-xl transition-all cursor-pointer overflow-hidden relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-accent-gold/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="h-40 flex items-center justify-center mb-6">
-                            <span class="material-symbols-outlined text-7xl text-accent-gold group-hover:scale-110 transition-transform">diamond</span>
-                        </div>
-                        <div class="flex justify-between items-center mb-2">
-                            <h3 class="text-xl font-bold text-accent-gold">Elite First</h3>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-4">La máxima expresión del lujo en Dubái. Flota Rolls-Royce y Bentley.</p>
-                    </div>
-                </div>
+    <!-- Cómo Funciona -->
+    <section class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6 md:px-12">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-semibold tracking-tight text-brand-black mb-4">Simplicidad en cada trayecto</h2>
+                <p class="text-brand-darkgray max-w-xl mx-auto">Diseñado para que tu experiencia sea perfecta desde el momento en que abres la plataforma hasta que llegas a tu destino.</p>
             </div>
-        </section>
-
-        <!-- Banner App / WhatsApp -->
-        <section class="py-24 bg-uber-gray text-uber-black">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="flex flex-col md:flex-row items-center justify-between gap-12 bg-white p-12 rounded-3xl shadow-xl">
-                    <div class="max-w-xl">
-                        <h2 class="text-4xl font-bold mb-6">Reserva en segundos</h2>
-                        <p class="text-gray-600 text-lg mb-8 font-medium">Atención nativa en español. Tu conductor te espera con un servicio impecable.</p>
-                        <a href="https://wa.me/123456789" class="inline-flex items-center gap-3 bg-careem-green text-white px-8 py-4 rounded-full font-bold hover:bg-green-600 transition-colors shadow-lg shadow-green-500/30">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.588-5.946 0-6.556 5.332-11.888 11.888-11.888 3.176 0 6.161 1.237 8.404 3.48s3.481 5.229 3.481 8.405c0 6.555-5.332 11.89-11.888 11.89-2.015 0-4.004-.51-5.776-1.471l-6.208 1.693z"></path></svg>
-                            Contactar por WhatsApp
-                        </a>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div class="text-center group">
+                    <div class="w-16 h-16 bg-brand-lightgray rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-brand-black group-hover:text-white transition-colors duration-300">
+                        <i data-lucide="map-pin" class="w-6 h-6"></i>
                     </div>
-                    <div class="w-64 h-64 bg-uber-gray rounded-full flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-8xl text-uber-black">qr_code_2</span>
+                    <h3 class="text-lg font-medium mb-2 text-brand-black">1. Define tu ruta</h3>
+                    <p class="text-brand-darkgray text-sm leading-relaxed">Ingresa tu punto de recogida y destino. Visualiza opciones claras y precios transparentes.</p>
+                </div>
+                <div class="text-center group">
+                    <div class="w-16 h-16 bg-brand-lightgray rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-brand-black group-hover:text-white transition-colors duration-300">
+                        <i data-lucide="car" class="w-6 h-6"></i>
                     </div>
+                    <h3 class="text-lg font-medium mb-2 text-brand-black">2. Elige tu vehículo</h3>
+                    <p class="text-brand-darkgray text-sm leading-relaxed">Desde sedanes premium hasta SUVs espaciosos. Selecciona la opción que mejor se adapte a tus necesidades.</p>
                 </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="bg-uber-black text-white py-16">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-                <div class="col-span-1 md:col-span-2">
-                    <div class="text-2xl font-bold tracking-tighter mb-6">EliteLatam</div>
-                    <p class="text-gray-400 text-sm max-w-sm">Movilidad premium en Dubái. Conectamos a la comunidad latina con la excelencia de los Emiratos.</p>
-                </div>
-                <div>
-                    <h4 class="font-bold mb-4">Compañía</h4>
-                    <ul class="space-y-3">
-                        <li><a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Sobre nosotros</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Nuestros servicios</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold mb-4">Legal</h4>
-                    <ul class="space-y-3">
-                        <li><a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Términos</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Privacidad</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-gray-500 text-sm">© 2024 EliteLatam Dubai.</p>
-                <div class="flex gap-4">
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined">language</span></a>
+                <div class="text-center group">
+                    <div class="w-16 h-16 bg-brand-lightgray rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-brand-black group-hover:text-white transition-colors duration-300">
+                        <i data-lucide="check-circle" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-medium mb-2 text-brand-black">3. Viaja sin estrés</h3>
+                    <p class="text-brand-darkgray text-sm leading-relaxed">Tu conductor profesional te recogerá puntualmente. Disfruta del trayecto con total tranquilidad.</p>
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- Servicios -->
+    <section id="servicios" class="py-24 bg-brand-lightgray">
+        <div class="max-w-7xl mx-auto px-6 md:px-12">
+            <h2 class="text-3xl font-semibold tracking-tight text-brand-black mb-12">Nuestra flota</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Servicio 1 -->
+                <div class="bg-white rounded-2xl p-6 shadow-subtle hover:shadow-soft transition-shadow cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format&fit=crop" alt="Premium Sedan" class="w-full h-48 object-cover rounded-xl mb-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-medium text-brand-black">Business Sedan</h3>
+                        <span class="text-xs font-medium bg-brand-lightgray text-brand-black px-2 py-1 rounded-md">Popular</span>
+                    </div>
+                    <p class="text-brand-darkgray text-sm mb-4">Lexus ES o similar. Ideal para traslados ejecutivos y viajes cómodos por la ciudad.</p>
+                    <div class="flex items-center gap-4 text-brand-darkgray text-sm font-medium">
+                        <span class="flex items-center gap-1"><i data-lucide="users" class="w-4 h-4"></i> 4</span>
+                        <span class="flex items-center gap-1"><i data-lucide="briefcase" class="w-4 h-4"></i> 2</span>
+                    </div>
+                </div>
+
+                <!-- Servicio 2 -->
+                <div class="bg-white rounded-2xl p-6 shadow-subtle hover:shadow-soft transition-shadow cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1609521263047-f8f205293f24?q=80&w=1964&auto=format&fit=crop" alt="Premium SUV" class="w-full h-48 object-cover rounded-xl mb-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-medium text-brand-black">Executive SUV</h3>
+                    </div>
+                    <p class="text-brand-darkgray text-sm mb-4">Chevrolet Tahoe o similar. Espacio superior para grupos y equipaje extra.</p>
+                    <div class="flex items-center gap-4 text-brand-darkgray text-sm font-medium">
+                        <span class="flex items-center gap-1"><i data-lucide="users" class="w-4 h-4"></i> 6</span>
+                        <span class="flex items-center gap-1"><i data-lucide="briefcase" class="w-4 h-4"></i> 4</span>
+                    </div>
+                </div>
+
+                <!-- Servicio 3 -->
+                <div class="bg-white rounded-2xl p-6 shadow-subtle hover:shadow-soft transition-shadow cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1633513364969-90d238217bb4?q=80&w=2071&auto=format&fit=crop" alt="First Class" class="w-full h-48 object-cover rounded-xl mb-6 grayscale hover:grayscale-0 transition-all">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-medium text-brand-black">First Class</h3>
+                        <span class="text-xs font-medium bg-brand-black text-white px-2 py-1 rounded-md">VIP</span>
+                    </div>
+                    <p class="text-brand-darkgray text-sm mb-4">Mercedes-Benz S-Class. La máxima expresión de lujo, confort y distinción.</p>
+                    <div class="flex items-center gap-4 text-brand-darkgray text-sm font-medium">
+                        <span class="flex items-center gap-1"><i data-lucide="users" class="w-4 h-4"></i> 3</span>
+                        <span class="flex items-center gap-1"><i data-lucide="briefcase" class="w-4 h-4"></i> 2</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conductores Destacados -->
+    <section id="conductores" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row gap-16 items-center">
+            <div class="w-full md:w-1/2">
+                <h2 class="text-3xl font-semibold tracking-tight text-brand-black mb-6">Profesionales al volante</h2>
+                <p class="text-brand-darkgray text-lg mb-8 leading-relaxed">Nuestros conductores no solo manejan, brindan una experiencia. Con extenso conocimiento de Dubái, hablarán tu idioma y asegurarán que llegues a tu destino con seguridad y elegancia.</p>
+                <div class="flex items-center gap-4">
+                    <div class="flex -space-x-4">
+                        <img class="w-12 h-12 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1974&auto=format&fit=crop" alt="Conductor">
+                        <img class="w-12 h-12 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1976&auto=format&fit=crop" alt="Conductora">
+                        <img class="w-12 h-12 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=1974&auto=format&fit=crop" alt="Conductor">
+                    </div>
+                    <span class="text-sm font-medium text-brand-darkgray">+50 conductores certificados</span>
+                </div>
+            </div>
+            
+            <div class="w-full md:w-1/2">
+                <!-- Driver Card Minimal -->
+                <div class="bg-brand-lightgray rounded-2xl p-8 relative overflow-hidden">
+                    <div class="flex items-start gap-6">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1974&auto=format&fit=crop" alt="Carlos" class="w-20 h-20 rounded-full object-cover">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <h4 class="text-lg font-medium text-brand-black">Carlos Mendoza</h4>
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-brand-green fill-brand-green/20"></i>
+                            </div>
+                            <div class="flex items-center gap-1 text-sm text-brand-darkgray mb-3">
+                                <i data-lucide="star" class="w-4 h-4 fill-brand-black text-brand-black"></i>
+                                <span class="font-medium text-brand-black">4.98</span>
+                                <span class="mx-1">•</span>
+                                <span>2,400 viajes</span>
+                            </div>
+                            <p class="text-sm text-brand-darkgray italic">"Excelente conductor. Conoce la Marina a la perfección y su vehículo estaba inmaculado."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Opiniones -->
+    <section class="py-24 bg-brand-black text-white">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 text-center">
+            <h2 class="text-3xl font-semibold tracking-tight mb-16">Confianza comprobada</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <div class="p-8 border border-white/10 rounded-2xl">
+                    <div class="flex gap-1 mb-6">
+                        <i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i>
+                    </div>
+                    <p class="text-gray-400 mb-8 leading-relaxed">"La app es súper limpia, rápida y sin distracciones. Reservé mi viaje al aeropuerto y el conductor llegó 5 minutos antes."</p>
+                    <div class="font-medium">Javier S.</div>
+                </div>
+                <div class="p-8 border border-white/10 rounded-2xl">
+                    <div class="flex gap-1 mb-6">
+                        <i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i>
+                    </div>
+                    <p class="text-gray-400 mb-8 leading-relaxed">"Es como usar una app top de Silicon Valley pero pensada para nosotros en Dubái. Precios transparentes y excelente servicio."</p>
+                    <div class="font-medium">Maria C.</div>
+                </div>
+                <div class="p-8 border border-white/10 rounded-2xl">
+                    <div class="flex gap-1 mb-6">
+                        <i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i>
+                    </div>
+                    <p class="text-gray-400 mb-8 leading-relaxed">"Recomiendo el Business Sedan. Espectacular la limpieza y la tranquilidad de tener conductores que entienden tu idioma."</p>
+                    <div class="font-medium">Andrés R.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="py-24 bg-white">
+        <div class="max-w-3xl mx-auto px-6 md:px-12">
+            <h2 class="text-3xl font-semibold tracking-tight text-brand-black mb-10 text-center">Preguntas Frecuentes</h2>
+            
+            <div class="space-y-4">
+                <div class="border-b border-brand-lightgray pb-4">
+                    <button class="w-full flex justify-between items-center py-4 text-left font-medium text-brand-black hover:text-brand-darkgray" onclick="toggleAccordion('faq1')">
+                        ¿Cómo se calculan las tarifas?
+                        <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                    </button>
+                    <div id="faq1" class="accordion-content text-brand-darkgray text-sm leading-relaxed pb-4">
+                        Nuestras tarifas se calculan por adelantado basándose en la distancia, el tiempo estimado y el tipo de vehículo seleccionado. El precio que ves al reservar es el precio final, sin costos ocultos.
+                    </div>
+                </div>
+                
+                <div class="border-b border-brand-lightgray pb-4">
+                    <button class="w-full flex justify-between items-center py-4 text-left font-medium text-brand-black hover:text-brand-darkgray" onclick="toggleAccordion('faq2')">
+                        ¿Puedo reservar para otra persona?
+                        <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                    </button>
+                    <div id="faq2" class="accordion-content text-brand-darkgray text-sm leading-relaxed pb-4">
+                        Sí, al momento de hacer la reserva puedes especificar los datos del pasajero final. Compartiremos el estado del viaje con él vía SMS.
+                    </div>
+                </div>
+
+                <div class="border-b border-brand-lightgray pb-4">
+                    <button class="w-full flex justify-between items-center py-4 text-left font-medium text-brand-black hover:text-brand-darkgray" onclick="toggleAccordion('faq3')">
+                        ¿Qué pasa si mi vuelo se retrasa?
+                        <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                    </button>
+                    <div id="faq3" class="accordion-content text-brand-darkgray text-sm leading-relaxed pb-4">
+                        Monitoreamos todos los vuelos mediante tu número de vuelo proporcionado. Ajustamos automáticamente el tiempo de recogida sin cargos adicionales.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-brand-lightgray py-12">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-2 text-brand-black font-semibold">
+                <i data-lucide="navigation-2" class="w-5 h-5"></i>
+                HervisHuber
+            </div>
+            
+            <div class="flex gap-8">
+                <a href="#" class="text-sm font-medium text-brand-darkgray hover:text-brand-black">Acerca de</a>
+                <a href="#" class="text-sm font-medium text-brand-darkgray hover:text-brand-black">Términos</a>
+                <a href="#" class="text-sm font-medium text-brand-darkgray hover:text-brand-black">Privacidad</a>
+            </div>
+            
+            <p class="text-xs text-brand-darkgray">© 2024 HervisHuber Technologies Inc.</p>
+        </div>
     </footer>
 
-    <script src="js/app.js"></script>
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('nav-scrolled');
+                navbar.classList.remove('py-4');
+                navbar.classList.add('py-3');
+            } else {
+                navbar.classList.remove('nav-scrolled');
+                navbar.classList.remove('py-3');
+                navbar.classList.add('py-4');
+            }
+        });
+
+        // FAQ Accordion
+        function toggleAccordion(id) {
+            const element = document.getElementById(id);
+            if (element.classList.contains('active')) {
+                element.classList.remove('active');
+            } else {
+                document.querySelectorAll('.accordion-content').forEach(el => el.classList.remove('active'));
+                element.classList.add('active');
+            }
+        }
+    </script>
 </body>
 </html>
