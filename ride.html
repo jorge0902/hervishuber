@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Mapa en Vivo | EliteLatam</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        uber: {
+                            black: "#000000",
+                            gray: "#F6F6F6",
+                        },
+                        careem: {
+                            green: "#49B649"
+                        },
+                        accent: {
+                            gold: "#E9C176"
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body class="font-sans overflow-hidden">
+    <!-- Map Background -->
+    <div class="fixed inset-0 map-bg z-0">
+        <div class="absolute inset-0 bg-white/20"></div>
+        <!-- Mock Map Markers -->
+        <div class="absolute top-[45%] left-[50%] -translate-x-1/2 -translate-y-1/2">
+            <span class="material-symbols-outlined text-uber-black text-4xl">location_on</span>
+        </div>
+        <div class="absolute top-[40%] left-[55%] animate-bounce">
+            <span class="material-symbols-outlined text-careem-green text-3xl">directions_car</span>
+        </div>
+        <div class="absolute top-[50%] left-[45%]">
+            <span class="material-symbols-outlined text-uber-black text-2xl">directions_car</span>
+        </div>
+    </div>
+
+    <!-- Floating Top Bar -->
+    <header class="fixed top-6 left-4 right-4 md:left-8 md:right-8 h-16 glass-panel rounded-full z-40 flex items-center justify-between px-6 border border-gray-200">
+        <div class="flex items-center gap-4">
+            <a href="index.html" class="h-10 w-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+            <h1 class="text-xl font-bold tracking-tight text-uber-black">EliteLatam</h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="hidden md:flex flex-col items-end">
+                <span class="text-xs text-gray-500 font-bold uppercase">Balance</span>
+                <span class="text-sm font-bold text-uber-black">2,450 AED</span>
+            </div>
+            <a href="dashboard.html" class="h-10 w-10 rounded-full bg-uber-gray flex items-center justify-center border-2 border-white shadow-sm overflow-hidden">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoCoyxfpP95ibOURUsnhVVGcmq2lPwAuHILxBwyFqorrTKT5lCGAqttX90oCm7A-djhtccGFEgL_zj2ncGdnPR9MFSiQgEaGAq7AqQWMOa3MnbGFNBfiSKPyochftOG9rTYcYm9nhokkX3Lh_N01ylEDEPH4S9ZUSLXY4ES35lDZOsaksVU43kUA74lM89Qujx9pnurprgJNHVwu9-WPfhvddIu50vCHcOfAIYuyHun6-e78-Ny1PU" alt="Profile" class="w-full h-full object-cover">
+            </a>
+        </div>
+    </header>
+
+    <!-- Floating Sidebar (Careem Style) -->
+    <aside class="fixed left-4 md:left-8 top-28 bottom-8 w-full max-w-sm glass-panel rounded-3xl z-40 flex flex-col border border-gray-200 shadow-2xl">
+        <div class="p-6 border-b border-gray-100">
+            <h2 class="text-2xl font-bold mb-6">¿A dónde vamos?</h2>
+            
+            <div class="relative group mb-4">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-uber-black"></span>
+                <input class="w-full pl-10 pr-4 py-3 bg-gray-100 rounded-xl border-none focus:ring-2 focus:ring-careem-green text-sm font-semibold" type="text" value="Jumeirah Lake Towers (JLT)"/>
+            </div>
+            <div class="relative group">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-sm border-2 border-uber-black"></span>
+                <input class="w-full pl-10 pr-4 py-3 bg-gray-100 rounded-xl border-none focus:ring-2 focus:ring-careem-green text-sm font-semibold" placeholder="Ingresa destino..." type="text"/>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+            <div>
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Sugerencias</h3>
+                <div class="space-y-3">
+                    <button class="flex items-center gap-4 w-full p-3 rounded-xl hover:bg-gray-50 transition-colors">
+                        <div class="h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 text-uber-black">
+                            <span class="material-symbols-outlined">home</span>
+                        </div>
+                        <div class="text-left">
+                            <p class="font-bold text-sm">Casa</p>
+                            <p class="text-xs text-gray-500">Marina Promenade</p>
+                        </div>
+                    </button>
+                    <button class="flex items-center gap-4 w-full p-3 rounded-xl hover:bg-gray-50 transition-colors">
+                        <div class="h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 text-uber-black">
+                            <span class="material-symbols-outlined">work</span>
+                        </div>
+                        <div class="text-left">
+                            <p class="font-bold text-sm">Oficina</p>
+                            <p class="text-xs text-gray-500">DIFC Gate Village</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 pt-2">
+            <a href="booking.html" class="block w-full bg-careem-green text-white text-center font-bold py-4 rounded-xl shadow-lg hover:bg-green-600 transition-colors">
+                Ver precios
+            </a>
+        </div>
+    </aside>
+
+    <!-- Map Controls -->
+    <div class="fixed right-4 md:right-8 top-28 flex flex-col gap-3 z-30">
+        <button class="h-12 w-12 bg-white rounded-xl flex items-center justify-center shadow-lg hover:bg-gray-50">
+            <span class="material-symbols-outlined">my_location</span>
+        </button>
+    </div>
+
+</body>
+</html>
