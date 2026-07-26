@@ -3,11 +3,15 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>HervisHuber | Premium Mobility</title>
+    <title>HervisHuber | Movilidad Premium con MapLibre</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
+    <!-- MapLibre GL JS (OpenStreetMap) -->
+    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+
     <script id="tailwind-config">
         tailwind.config = {
             theme: {
@@ -38,11 +42,6 @@
     <link rel="stylesheet" href="css/styles.css"/>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #FFFFFF; color: #111111; -webkit-font-smoothing: antialiased; }
-        .hero-map-bg {
-            background-image: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2074&auto=format&fit=crop'); /* Clean map-like high altitude view placeholder */
-            background-size: cover;
-            background-position: center;
-        }
         .nav-scrolled {
             background-color: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -53,6 +52,18 @@
         }
         .accordion-content.active {
             display: block;
+        }
+        /* Custom maplibre popup style overrides */
+        .maplibregl-popup-content {
+            border-radius: 12px;
+            padding: 0;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            border: 1px solid #F5F5F5;
+        }
+        .maplibregl-popup-close-button {
+            padding: 4px 8px;
+            font-size: 14px;
+            color: #888;
         }
     </style>
 </head>
@@ -81,45 +92,51 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section id="inicio" class="relative w-full h-screen flex items-center justify-center lg:justify-start lg:pl-[10%]">
-        <!-- Map Background (70% visual weight) -->
+    <!-- Hero Section con Mapa MapLibre + OpenStreetMap (70% del espacio) -->
+    <section id="inicio" class="relative w-full h-screen flex items-center justify-center lg:justify-start lg:pl-[6%] overflow-hidden">
+        
+        <!-- Live Maplibre GL Canvas Container -->
         <div class="absolute inset-0 z-0 flex justify-end">
-            <div class="w-full lg:w-[75%] h-full hero-map-bg opacity-90 grayscale-[20%]"></div>
-            <!-- Fade gradient to blend map with left white area on desktop -->
-            <div class="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent lg:w-1/2"></div>
+            <div id="map" class="w-full lg:w-[75%] h-full"></div>
+            <!-- Smooth overlay for text contrast on left side -->
+            <div class="absolute inset-0 pointer-events-none bg-gradient-to-r from-white via-white/80 to-transparent lg:w-1/2"></div>
         </div>
 
-        <!-- Floating Card -->
-        <div class="relative z-10 bg-white p-8 md:p-10 rounded-2xl shadow-soft max-w-[420px] w-[90%] md:w-full mt-16 lg:mt-0 border border-brand-lightgray">
-            <h1 class="text-4xl font-semibold tracking-tight text-brand-black mb-2">Viaja con nivel.</h1>
-            <p class="text-brand-darkgray mb-8">Movilidad profesional y premium en Dubái.</p>
+        <!-- Floating Card sobre el Mapa -->
+        <div class="relative z-10 bg-white/95 backdrop-blur-md p-8 md:p-10 rounded-2xl shadow-soft max-w-[420px] w-[90%] md:w-full mt-16 lg:mt-0 border border-brand-lightgray">
+            <h1 class="text-3xl font-semibold tracking-tight text-brand-black mb-2">Solicita tu viaje</h1>
+            <p class="text-brand-darkgray text-sm mb-6">Mapa interactivo OpenStreetMap en tiempo real.</p>
             
-            <form action="booking.html" class="space-y-4">
+            <form id="trip-form" class="space-y-4">
                 <div class="relative group">
                     <div class="absolute left-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-brand-black"></div>
                     <div class="absolute left-[19px] top-[24px] w-0.5 h-6 bg-brand-lightgray"></div>
-                    <input class="w-full pl-10 pr-4 py-3.5 bg-brand-lightgray border border-transparent rounded-xl focus:bg-white focus:border-brand-green focus:ring-0 text-sm font-medium transition-all outline-none" type="text" placeholder="Punto de recogida" value="Aeropuerto Internacional de Dubái (DXB)"/>
+                    <input id="pickup-input" class="w-full pl-10 pr-4 py-3 bg-brand-lightgray border border-transparent rounded-xl focus:bg-white focus:border-brand-green focus:ring-0 text-sm font-medium transition-all outline-none" type="text" placeholder="Punto de recogida" value="Aeropuerto de Dubái (DXB)"/>
                 </div>
                 <div class="relative group">
                     <div class="absolute left-4 top-1/2 -translate-y-1/2 w-2 h-2 bg-brand-green rounded-sm"></div>
-                    <input class="w-full pl-10 pr-4 py-3.5 bg-brand-lightgray border border-transparent rounded-xl focus:bg-white focus:border-brand-green focus:ring-0 text-sm font-medium transition-all outline-none" type="text" placeholder="¿Hacia dónde vas?" />
+                    <input id="dropoff-input" class="w-full pl-10 pr-4 py-3 bg-brand-lightgray border border-transparent rounded-xl focus:bg-white focus:border-brand-green focus:ring-0 text-sm font-medium transition-all outline-none" type="text" placeholder="¿Hacia dónde vas?" value="Dubai Marina Promenade"/>
                 </div>
                 
-                <div class="flex items-center justify-between py-4 border-b border-brand-lightgray mt-2 mb-2">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="clock" class="w-4 h-4 text-brand-darkgray"></i>
-                        <span class="text-sm font-medium text-brand-darkgray">~25 min</span>
+                <div class="flex items-center justify-between py-3 border-b border-brand-lightgray text-xs">
+                    <div class="flex items-center gap-1.5 text-brand-darkgray font-medium">
+                        <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                        <span id="est-time">~25 min</span> (14.2 km)
                     </div>
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="credit-card" class="w-4 h-4 text-brand-darkgray"></i>
-                        <span class="text-sm font-medium text-brand-darkgray">Est. AED 120</span>
+                    <div class="flex items-center gap-1.5 text-brand-black font-bold">
+                        <i data-lucide="credit-card" class="w-3.5 h-3.5 text-brand-green"></i>
+                        <span id="est-price">AED 120</span>
                     </div>
                 </div>
 
-                <button type="submit" class="w-full bg-brand-green text-white py-4 rounded-xl font-medium hover:bg-[#15803D] transition-colors mt-4 flex items-center justify-center gap-2">
+                <div class="text-xs text-brand-darkgray flex items-center justify-between bg-brand-lightgray p-2.5 rounded-xl">
+                    <span>Conductor:</span>
+                    <span id="selected-driver-info" class="font-bold text-brand-black">Ahmed • Toyota Camry</span>
+                </div>
+
+                <button type="submit" class="w-full bg-brand-black text-white py-4 rounded-xl font-medium hover:bg-gray-900 transition-colors flex items-center justify-center gap-2 text-sm shadow-subtle">
                     Solicitar viaje
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    <i data-lucide="arrow-right" class="w-4 h-4 text-brand-green"></i>
                 </button>
             </form>
         </div>
@@ -130,7 +147,7 @@
         <div class="max-w-7xl mx-auto px-6 md:px-12">
             <div class="text-center mb-16">
                 <h2 class="text-3xl font-semibold tracking-tight text-brand-black mb-4">Simplicidad en cada trayecto</h2>
-                <p class="text-brand-darkgray max-w-xl mx-auto">Diseñado para que tu experiencia sea perfecta desde el momento en que abres la plataforma hasta que llegas a tu destino.</p>
+                <p class="text-brand-darkgray max-w-xl mx-auto text-sm">Experiencia fluida y profesional desde cualquier dispositivo.</p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -138,22 +155,22 @@
                     <div class="w-16 h-16 bg-brand-lightgray rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-brand-black group-hover:text-white transition-colors duration-300">
                         <i data-lucide="map-pin" class="w-6 h-6"></i>
                     </div>
-                    <h3 class="text-lg font-medium mb-2 text-brand-black">1. Define tu ruta</h3>
-                    <p class="text-brand-darkgray text-sm leading-relaxed">Ingresa tu punto de recogida y destino. Visualiza opciones claras y precios transparentes.</p>
+                    <h3 class="text-lg font-medium mb-2 text-brand-black">1. Ubicación y mapa</h3>
+                    <p class="text-brand-darkgray text-sm leading-relaxed">MapLibre GL JS detecta tu posición y muestra conductores en tiempo real.</p>
                 </div>
                 <div class="text-center group">
                     <div class="w-16 h-16 bg-brand-lightgray rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-brand-black group-hover:text-white transition-colors duration-300">
                         <i data-lucide="car" class="w-6 h-6"></i>
                     </div>
-                    <h3 class="text-lg font-medium mb-2 text-brand-black">2. Elige tu vehículo</h3>
-                    <p class="text-brand-darkgray text-sm leading-relaxed">Desde sedanes premium hasta SUVs espaciosos. Selecciona la opción que mejor se adapte a tus necesidades.</p>
+                    <h3 class="text-lg font-medium mb-2 text-brand-black">2. Selección de conductor</h3>
+                    <p class="text-brand-darkgray text-sm leading-relaxed">Elige a tu conductor o categoría de vehículo directo sobre el mapa.</p>
                 </div>
                 <div class="text-center group">
                     <div class="w-16 h-16 bg-brand-lightgray rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-brand-black group-hover:text-white transition-colors duration-300">
                         <i data-lucide="check-circle" class="w-6 h-6"></i>
                     </div>
-                    <h3 class="text-lg font-medium mb-2 text-brand-black">3. Viaja sin estrés</h3>
-                    <p class="text-brand-darkgray text-sm leading-relaxed">Tu conductor profesional te recogerá puntualmente. Disfruta del trayecto con total tranquilidad.</p>
+                    <h3 class="text-lg font-medium mb-2 text-brand-black">3. Reserva en local</h3>
+                    <p class="text-brand-darkgray text-sm leading-relaxed">Confirmación instantánea guardada en tu navegador sin requerir backend.</p>
                 </div>
             </div>
         </div>
@@ -172,11 +189,7 @@
                         <h3 class="text-lg font-medium text-brand-black">Business Sedan</h3>
                         <span class="text-xs font-medium bg-brand-lightgray text-brand-black px-2 py-1 rounded-md">Popular</span>
                     </div>
-                    <p class="text-brand-darkgray text-sm mb-4">Lexus ES o similar. Ideal para traslados ejecutivos y viajes cómodos por la ciudad.</p>
-                    <div class="flex items-center gap-4 text-brand-darkgray text-sm font-medium">
-                        <span class="flex items-center gap-1"><i data-lucide="users" class="w-4 h-4"></i> 4</span>
-                        <span class="flex items-center gap-1"><i data-lucide="briefcase" class="w-4 h-4"></i> 2</span>
-                    </div>
+                    <p class="text-brand-darkgray text-sm mb-4">Lexus ES o similar. Traslados ejecutivos y cómodos por la ciudad.</p>
                 </div>
 
                 <!-- Servicio 2 -->
@@ -185,11 +198,7 @@
                     <div class="flex justify-between items-start mb-2">
                         <h3 class="text-lg font-medium text-brand-black">Executive SUV</h3>
                     </div>
-                    <p class="text-brand-darkgray text-sm mb-4">Chevrolet Tahoe o similar. Espacio superior para grupos y equipaje extra.</p>
-                    <div class="flex items-center gap-4 text-brand-darkgray text-sm font-medium">
-                        <span class="flex items-center gap-1"><i data-lucide="users" class="w-4 h-4"></i> 6</span>
-                        <span class="flex items-center gap-1"><i data-lucide="briefcase" class="w-4 h-4"></i> 4</span>
-                    </div>
+                    <p class="text-brand-darkgray text-sm mb-4">Chevrolet Tahoe o similar. Espacio superior para grupos.</p>
                 </div>
 
                 <!-- Servicio 3 -->
@@ -199,11 +208,7 @@
                         <h3 class="text-lg font-medium text-brand-black">First Class</h3>
                         <span class="text-xs font-medium bg-brand-black text-white px-2 py-1 rounded-md">VIP</span>
                     </div>
-                    <p class="text-brand-darkgray text-sm mb-4">Mercedes-Benz S-Class. La máxima expresión de lujo, confort y distinción.</p>
-                    <div class="flex items-center gap-4 text-brand-darkgray text-sm font-medium">
-                        <span class="flex items-center gap-1"><i data-lucide="users" class="w-4 h-4"></i> 3</span>
-                        <span class="flex items-center gap-1"><i data-lucide="briefcase" class="w-4 h-4"></i> 2</span>
-                    </div>
+                    <p class="text-brand-darkgray text-sm mb-4">Mercedes-Benz S-Class. Distinción y lujo absoluto en Dubái.</p>
                 </div>
             </div>
         </div>
@@ -213,35 +218,25 @@
     <section id="conductores" class="py-24 bg-white">
         <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row gap-16 items-center">
             <div class="w-full md:w-1/2">
-                <h2 class="text-3xl font-semibold tracking-tight text-brand-black mb-6">Profesionales al volante</h2>
-                <p class="text-brand-darkgray text-lg mb-8 leading-relaxed">Nuestros conductores no solo manejan, brindan una experiencia. Con extenso conocimiento de Dubái, hablarán tu idioma y asegurarán que llegues a tu destino con seguridad y elegancia.</p>
-                <div class="flex items-center gap-4">
-                    <div class="flex -space-x-4">
-                        <img class="w-12 h-12 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1974&auto=format&fit=crop" alt="Conductor">
-                        <img class="w-12 h-12 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1976&auto=format&fit=crop" alt="Conductora">
-                        <img class="w-12 h-12 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=1974&auto=format&fit=crop" alt="Conductor">
-                    </div>
-                    <span class="text-sm font-medium text-brand-darkgray">+50 conductores certificados</span>
-                </div>
+                <h2 class="text-3xl font-semibold tracking-tight text-brand-black mb-6">Conductores profesionales</h2>
+                <p class="text-brand-darkgray text-lg mb-8 leading-relaxed">Nuestros conductores registrados en la plataforma cuentan con alta calificación y seguimiento en tiempo real sobre el mapa MapLibre.</p>
             </div>
             
             <div class="w-full md:w-1/2">
-                <!-- Driver Card Minimal -->
                 <div class="bg-brand-lightgray rounded-2xl p-8 relative overflow-hidden">
                     <div class="flex items-start gap-6">
-                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1974&auto=format&fit=crop" alt="Carlos" class="w-20 h-20 rounded-full object-cover">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1974&auto=format&fit=crop" alt="Ahmed" class="w-20 h-20 rounded-full object-cover">
                         <div>
                             <div class="flex items-center gap-2 mb-1">
-                                <h4 class="text-lg font-medium text-brand-black">Carlos Mendoza</h4>
-                                <i data-lucide="check-circle-2" class="w-4 h-4 text-brand-green fill-brand-green/20"></i>
+                                <h4 class="text-lg font-medium text-brand-black">Ahmed Al-Mansoori</h4>
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-brand-green"></i>
                             </div>
                             <div class="flex items-center gap-1 text-sm text-brand-darkgray mb-3">
-                                <i data-lucide="star" class="w-4 h-4 fill-brand-black text-brand-black"></i>
-                                <span class="font-medium text-brand-black">4.98</span>
+                                <span class="font-medium text-brand-black">★ 4.9</span>
                                 <span class="mx-1">•</span>
-                                <span>2,400 viajes</span>
+                                <span>Toyota Camry</span>
                             </div>
-                            <p class="text-sm text-brand-darkgray italic">"Excelente conductor. Conoce la Marina a la perfección y su vehículo estaba inmaculado."</p>
+                            <p class="text-sm text-brand-darkgray italic">"Puntual y vehículo imponente. Conducción suave en las autopistas de Dubái."</p>
                         </div>
                     </div>
                 </div>
@@ -249,96 +244,65 @@
         </div>
     </section>
 
-    <!-- Opiniones -->
-    <section class="py-24 bg-brand-black text-white">
-        <div class="max-w-7xl mx-auto px-6 md:px-12 text-center">
-            <h2 class="text-3xl font-semibold tracking-tight mb-16">Confianza comprobada</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-                <div class="p-8 border border-white/10 rounded-2xl">
-                    <div class="flex gap-1 mb-6">
-                        <i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i>
-                    </div>
-                    <p class="text-gray-400 mb-8 leading-relaxed">"La app es súper limpia, rápida y sin distracciones. Reservé mi viaje al aeropuerto y el conductor llegó 5 minutos antes."</p>
-                    <div class="font-medium">Javier S.</div>
-                </div>
-                <div class="p-8 border border-white/10 rounded-2xl">
-                    <div class="flex gap-1 mb-6">
-                        <i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i>
-                    </div>
-                    <p class="text-gray-400 mb-8 leading-relaxed">"Es como usar una app top de Silicon Valley pero pensada para nosotros en Dubái. Precios transparentes y excelente servicio."</p>
-                    <div class="font-medium">Maria C.</div>
-                </div>
-                <div class="p-8 border border-white/10 rounded-2xl">
-                    <div class="flex gap-1 mb-6">
-                        <i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i><i data-lucide="star" class="w-5 h-5 fill-white"></i>
-                    </div>
-                    <p class="text-gray-400 mb-8 leading-relaxed">"Recomiendo el Business Sedan. Espectacular la limpieza y la tranquilidad de tener conductores que entienden tu idioma."</p>
-                    <div class="font-medium">Andrés R.</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- FAQ -->
-    <section id="faq" class="py-24 bg-white">
+    <section id="faq" class="py-24 bg-brand-lightgray">
         <div class="max-w-3xl mx-auto px-6 md:px-12">
             <h2 class="text-3xl font-semibold tracking-tight text-brand-black mb-10 text-center">Preguntas Frecuentes</h2>
             
             <div class="space-y-4">
-                <div class="border-b border-brand-lightgray pb-4">
-                    <button class="w-full flex justify-between items-center py-4 text-left font-medium text-brand-black hover:text-brand-darkgray" onclick="toggleAccordion('faq1')">
-                        ¿Cómo se calculan las tarifas?
+                <div class="border-b border-gray-200 pb-4">
+                    <button class="w-full flex justify-between items-center py-4 text-left font-medium text-brand-black" onclick="toggleAccordion('faq1')">
+                        ¿Qué mapa utiliza HervisHuber?
                         <i data-lucide="chevron-down" class="w-5 h-5"></i>
                     </button>
                     <div id="faq1" class="accordion-content text-brand-darkgray text-sm leading-relaxed pb-4">
-                        Nuestras tarifas se calculan por adelantado basándose en la distancia, el tiempo estimado y el tipo de vehículo seleccionado. El precio que ves al reservar es el precio final, sin costos ocultos.
+                        Utilizamos MapLibre GL JS junto con los datos libres de OpenStreetMap (OSM) y Carto, garantizando alta velocidad, privacidad y cero costos de API.
                     </div>
                 </div>
                 
-                <div class="border-b border-brand-lightgray pb-4">
-                    <button class="w-full flex justify-between items-center py-4 text-left font-medium text-brand-black hover:text-brand-darkgray" onclick="toggleAccordion('faq2')">
-                        ¿Puedo reservar para otra persona?
+                <div class="border-b border-gray-200 pb-4">
+                    <button class="w-full flex justify-between items-center py-4 text-left font-medium text-brand-black" onclick="toggleAccordion('faq2')">
+                        ¿Requiere conexión a un servidor backend?
                         <i data-lucide="chevron-down" class="w-5 h-5"></i>
                     </button>
                     <div id="faq2" class="accordion-content text-brand-darkgray text-sm leading-relaxed pb-4">
-                        Sí, al momento de hacer la reserva puedes especificar los datos del pasajero final. Compartiremos el estado del viaje con él vía SMS.
-                    </div>
-                </div>
-
-                <div class="border-b border-brand-lightgray pb-4">
-                    <button class="w-full flex justify-between items-center py-4 text-left font-medium text-brand-black hover:text-brand-darkgray" onclick="toggleAccordion('faq3')">
-                        ¿Qué pasa si mi vuelo se retrasa?
-                        <i data-lucide="chevron-down" class="w-5 h-5"></i>
-                    </button>
-                    <div id="faq3" class="accordion-content text-brand-darkgray text-sm leading-relaxed pb-4">
-                        Monitoreamos todos los vuelos mediante tu número de vuelo proporcionado. Ajustamos automáticamente el tiempo de recogida sin cargos adicionales.
+                        No. Este MVP funciona al 100% en tu navegador. Tus reservas se almacenan en la memoria local (localStorage).
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Modal Confirmación de Viaje -->
+    <div id="confirm-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-8 max-w-sm w-full shadow-soft text-center animate-fade-in">
+            <div class="w-12 h-12 bg-green-100 text-brand-green rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="check" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-xl font-bold text-brand-black">¡Viaje Solicitado!</h3>
+            <p class="text-xs text-brand-darkgray mt-1">Guardado en tu navegador (localStorage)</p>
+            
+            <div id="modal-trip-details"></div>
+
+            <button onclick="closeModal()" class="w-full bg-brand-black text-white py-3 rounded-xl font-medium text-sm hover:bg-gray-800 transition-colors mt-2">
+                Entendido
+            </button>
+        </div>
+    </div>
+
     <!-- Footer -->
-    <footer class="bg-brand-lightgray py-12">
+    <footer class="bg-white py-12 border-t border-brand-lightgray">
         <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-6">
             <div class="flex items-center gap-2 text-brand-black font-semibold">
                 <i data-lucide="navigation-2" class="w-5 h-5"></i>
                 HervisHuber
             </div>
-            
-            <div class="flex gap-8">
-                <a href="#" class="text-sm font-medium text-brand-darkgray hover:text-brand-black">Acerca de</a>
-                <a href="#" class="text-sm font-medium text-brand-darkgray hover:text-brand-black">Términos</a>
-                <a href="#" class="text-sm font-medium text-brand-darkgray hover:text-brand-black">Privacidad</a>
-            </div>
-            
-            <p class="text-xs text-brand-darkgray">© 2024 HervisHuber Technologies Inc.</p>
+            <p class="text-xs text-brand-darkgray">© 2024 HervisHuber • MapLibre GL JS & OpenStreetMap Integration</p>
         </div>
     </footer>
 
+    <script src="js/app.js"></script>
     <script>
-        // Initialize Icons
         lucide.createIcons();
 
         // Navbar scroll effect
@@ -355,7 +319,6 @@
             }
         });
 
-        // FAQ Accordion
         function toggleAccordion(id) {
             const element = document.getElementById(id);
             if (element.classList.contains('active')) {
